@@ -11,22 +11,12 @@
  */
 
 
-//TODO Label 
-//TODO LIMITATION
-//TODO ADD CLASS
+//TODO Label解决
 
 (function ($) {
 
-    var __GlobalData = null;
-    var mselector_data_array = null;
-    var mselector_categories = null;
-    var mselector_hotitems = null;
-    var mselector_relations = null;
-    var dataInputDom = null;
-    var searchValue = null;
-    var runList = null;
-    var mselector_settings = {};
 
+    var dataInputDom = null;
     var auto_search = {
 
         run: function () {
@@ -96,16 +86,22 @@
         },
     };
 
+
     /////////////////////////////////////////////////////////
     $.fn.mselector = function (options) {
-
-
-        $(this).click(function () {
-            //INIT
+            var __GlobalData = null;
+            var mselector_data_array = null;
+            var mselector_categories = null;
+            var mselector_hotitems = null;
+            var mselector_relations = null;
+            
+            var searchValue = null;
+            var runList = null;
+            var mselector_settings = null;
 
             dataInputDom = this;
 
-            var defaults = {
+           var defaults = {
                 ajax: null,
                 data: null,
                 theme: null,
@@ -122,42 +118,104 @@
                     hot_items: 'Hot Items',
                     all_categories: 'All Catagory',
                     error: '',
-                    tips: ''
+                    tips: '<em>Multiple Select</em>'
                 },
                 max: 200
             };
-
             mselector_settings = $.extend({}, defaults, options);
             mselector_settings.language = $.extend({}, defaults.language, options.language);
             mselector_settings.size = $.extend({}, defaults.size, options.size);
-            if (mselector_settings.ajax) {
-                console.log('ajax:' + mselector_settings.ajax.url + '===' + mselector_settings.ajax.type);
-                $.fn.mselector.load_data_ajax(mselector_settings.ajax.url, mselector_settings.ajax.type);
 
-            }
-            else if (mselector_settings.data) {
 
-                $.fn.mselector.load_data(mselector_settings.data);
 
-            } else {
-                alert('No Data');
-                return;
 
-            }
-        });
+            $(this).click(function () {
+                    //INIT
+                if (mselector_settings.ajax) {
 
+                        console.log('ajax:' + mselector_settings.ajax.url + ' BY ' + mselector_settings.ajax.type);
+                        if ($.fn.mselector.load_data_ajax(mselector_settings.ajax.url, mselector_settings.ajax.type)===false){
+                            console.log('return...');
+                            return ;
+                        }
+                        console.log('FINISH AJAx...');
+                        
+                }
+                else if (mselector_settings.data) {
+
+                } 
+                    else {
+
+                
+                }
+                console.log('=====');
+                console.log(mselector_settings);
+                console.log(__GlobalData);
+                console.log('=====');
+                
+                $.fn.mselector.separate_data(options,this);
+                $.fn.mselector.init();
+                
+
+            });
+            
+
+
+
+
+        // this.addClass('modal fade');
+        // this.attr('tabindex', '-1');
+        // this.attr('role', 'dialog');
 
         return this;
     };
 
+    //Separate Data
+    $.fn.mselector.separate_data = function (options,con) {
+
+        mselector_data_array = __GlobalData.list;
+        mselector_categories = __GlobalData.category.categories;
+        mselector_hotitems = __GlobalData.category.hotitems;
+        mselector_relations = __GlobalData.relations;
+        dataInputDom = con;
+        var defaults = {
+                ajax: null,
+                data: null,
+                theme: null,
+                title: 'M_SELECTOR TITLE',
+                size: {
+                    width: '700px',
+                    height: '350px'
+                },
+                language: {
+                    search: 'Search',
+                    confirm: 'Confirm',
+                    cancel: 'Cancel',
+                    all: 'ALL',
+                    hot_items: 'Hot Items',
+                    all_categories: 'All Catagory',
+                    error: '',
+                    tips: '<em>Multiple Select</em>'
+                },
+                max: 200
+            };
+            mselector_settings = $.extend({}, defaults, options);
+            mselector_settings.language = $.extend({}, defaults.language, options.language);
+            mselector_settings.size = $.extend({}, defaults.size, options.size);
+
+
+
+    };
     // ****************
     // FUNCTIONS
     // ****************
 
-    $.fn.mselector.def_function = function () {
+    //$.fn.mselector.def_function = function () {
 
         $.fn.mselector.init = function () {
-
+            console.log('=======init');
+            console.log(__GlobalData);
+            console.log(mselector_settings);
             var content =
                 '<div class="m_selector_box ">' +
                 '   <div class="m_selector_box_bg"></div>' +
@@ -195,7 +253,8 @@
 
             $('body').append(content);
 
-            //$('.data-result').html('<em>可选择多项</em>');
+            $('.data-result').html(mselector_settings.language.tips);
+            
             if (mselector_settings.theme) {
 
                 $('.m_selector_box').addClass('mselector_black');
@@ -244,8 +303,8 @@
             var minwid = document.documentElement.clientWidth;
 
             $('.m_selector_outer .m_selector_header').on("mousedown", function (e) {
-                
-                $(this)[0].oncontextmenu = function (e) { return false; }; //Forbidden Right Click Menu
+                //$(this)[0].onselectstart = function(e) { return false; };//防止拖动窗口时，会有文字被选中的现象(事实证明不加上这段效果会更好)
+                $(this)[0].oncontextmenu = function (e) { return false; }; //防止右击弹出菜单
                 var getStartX = e.pageX;
                 var getStartY = e.pageY;
                 var getPositionX = (minwid / 2) - $(this).offset().left,
@@ -270,30 +329,52 @@
         //Close Dialog Box
         $.fn.mselector.close_it = function () {
             $('.m_selector_box').remove();
-            $(this).remove();
+
         };
 
         //Select Items & Close Dialog Box
         $.fn.mselector.select_it = function () {
-
+            console.log(dataInputDom);
             var val = '';
             var item_name = '';
+            var item_id_list = [];
+
             if ($('.save_box').length > 0) {
                 $('.save_box').each(function () {
+                 
+                    if(!!mselector_relations[$(this).data("code")]){
+                         //item_id_list.concat(mselector_relations[$(this).data("code")]); WHY
+                         item_id_list.push.apply(item_id_list,mselector_relations[$(this).data("code")]);  
+                          
+                         console.log(item_id_list);
+                    }else{
+                         item_id_list.push($(this).data("code").toString() );
+                    }
                     val += $(this).data("code") + ',';
                     item_name += $(this).data("name") + '-';
                 });
             }
 
+            item_id_list=item_id_list.map(function(data){  
+                return parseInt(data);  
+            });  
+
+            $.unique(item_id_list); 
+
+            //tem_id_list = item_id_list.sort();
+
+ 
             if (val !== '') {
                 val = val.substring(0, val.lastIndexOf(','));
             }
-            console.log(val + '  ==== SELECTION');
+            console.log(item_id_list + '  ==== SELECTION');
             if (item_name !== '') {
                 item_name = item_name.substring(0, item_name.lastIndexOf('-'));
             }
 
             $(dataInputDom).data("value", val);
+            $(dataInputDom).attr("item_id_list", item_id_list);
+
             $(dataInputDom).val(item_name);
             $.fn.mselector.close_it();
 
@@ -564,6 +645,8 @@
 
                         }
                     } else {
+                        // console.log('============================');
+                        // console.log($(this).data("code").toString().substring(0, 3) + ']');
                         var numlabel = $('.data-list-categories a[data-code=' + reverse_relations[$(this).data("code").toString()] + ']').find('label').text();
                         $('.data-list-categories a[data-code=' + reverse_relations[$(this).data("code").toString()] + ']').find('label').text(parseInt(numlabel) + 1).show();
                     }
@@ -594,9 +677,6 @@
             var list = __GlobalData.list;
             var dataArr = [];
             for (var i in list) {
-                // if (parseInt(i.toString().substring(0, 2)) >= 32) {
-                //     continue;
-                // }
                 var temp = {};
                 temp.code = i;
                 temp.name = list[i][0];
@@ -605,17 +685,9 @@
             }
             return dataArr;
         };
-    };
-    //Separate Data
-    $.fn.mselector.separate_data = function () {
+   // };
+    
 
-        mselector_data_array = __GlobalData.list;
-        mselector_categories = __GlobalData.category.categories;
-        mselector_hotitems = __GlobalData.category.hotitems;
-        mselector_relations = __GlobalData.relations;
-
-
-    };
 
     //Load Data By Data Structure
     $.fn.mselector.load_data = function (data) {
@@ -635,23 +707,21 @@
     $.fn.mselector.load_data_ajax = function (url, method_type) {
 
         method_type = method_type || 'GET'; //JS默认参数方式之一
-        __GlobalData = {};
 
         $.ajax({
             type: method_type,
             url: url,
             dataType: 'JSON',
+            async: false,
             success: function (data) {
                 __GlobalData = data;
-                $.fn.mselector.separate_data();
-                $.fn.mselector.def_function();
-                $.fn.mselector.init();
                 console.log('DATA AJAX LOAD SUCCESSFULLY');
-
+                return true;
             },
             error: function (data) {
-
+                
                 console.log('DATA AJAX LOAD FAIL');
+                return false;
             }
 
         });
