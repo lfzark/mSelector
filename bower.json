@@ -4,5 +4,5 @@
   "dependencies": {
     "jquery": "^3.0.0"
   },
-  "private": true
+  "private": false
 }
