@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Test</title>
+  <link href="dist/css/mselector.css" type="text/css" rel="stylesheet">
+  <script type="text/javascript" src="dist/js/libs/jquery.min.js"></script>
+  <script type="text/javascript" src="js/mselector.js"></script>
+
+  <style type="text/css">
+    /*.poc_selector,target_selector{    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+    width: 20%;
+    }*/
+  </style>
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      var demo_data = {
+        "category": {
+          "categories": [
+            "001",
+            "002"
+          ],
+          "hotitems": [
+            "1",
+            "2"
+          ]
+        },
+        "list": {
+          "000": [
+            "\u5168\u90e8",
+            "ALL",
+            "AL"
+          ],
+          "001": [
+            "Programming Language",
+            "Programming Language",
+            "Programming Language"
+          ],
+          "002": [
+            "Database",
+            "Database",
+            "Database"
+          ],
+          "1": [
+            "Python",
+            "Python",
+            "Py"
+          ],
+          "2": [
+            "PHP",
+            "PHP",
+            "PHP"
+          ],
+          "3": [
+            "Java",
+            "Java",
+            "Java"
+          ],
+          "4": [
+            "Mysql",
+            "Mysql",
+            "Mysql"
+          ],
+          "5": [
+            "Sqlite",
+            "Sqlite",
+            "Sqlite"
+          ]
+        },
+        "relations": {
+          "001": [
+            "1",
+            "2",
+            "3"
+          ],
+          "002": [
+            "4",
+            "5"
+          ]
+        }
+      };
+      $('.result').click(function () {
+        $('.result_area').html('You Choose:<br><hr>' + $('.poc_selector').attr('item_id_list'));
+      });
+
+
+      $('.poc_selector').mselector({
+        'ajax': {
+          url: 'https://raw.githubusercontent.com/lfzark/lfzark.github.com/master/data.json',
+          type: 'GET'
+        },
+        'title': '<em>PoC选择器</em>',
+        'language': {
+          search: '搜索',
+          confirm: '确认',
+          cancel: '取消',
+          all: '全部',
+          hot_items: '常用PoC',
+          all_categories: '所有分类',
+          error: '',
+          tips: '<em>可选择多项</em>'
+        }
+      }
+      );
+
+
+      $('.target_selector').mselector({
+        'data': demo_data,
+        'theme': 'black'
+      });
+      $('.null_selector').mselector({
+          'theme': 'black'
+        });
+    });
+  </script>
+</head>
+
+<body>
+
+  Ajax Selector : <input class="poc_selector" data-value="" type="text"> 
+  Data Selector : <input class="target_selector"  data-value="" type="text">
+  Null Selector : <input class="null_selector"  data-value="" type="text">
+  <input type="button" class='result' value="RESULT">
+  <hr>
+  <div class='result_area'> </div>
+</body>
+
+</html>
