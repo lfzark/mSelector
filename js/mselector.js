@@ -141,13 +141,16 @@
                         console.log('FINISH AJAx...');
                         
                 }
-                else if (mselector_settings.data) {
+			     else if (mselector_settings.data) {
 
-                } 
-                    else {
+				 $.fn.mselector.load_data(mselector_settings.data);
 
-                
-                }
+			     } 
+ 				 else {
+   					alert('No Data');
+					return;
+
+			    }
                 console.log('=====');
                 console.log(mselector_settings);
                 console.log(__GlobalData);
