@@ -1,0 +1,65 @@
+{
+  "category": {
+    "categories": [
+      "001",
+      "002"
+    ],
+    "hotitems": [
+      "1",
+      "2"
+    ]
+  },
+  "list": {
+    "000": [
+      "\u5168\u90e8",
+      "ALL",
+      "AL"
+    ],
+    "001": [
+      "Programming Language",
+      "Programming Language",
+      "Programming Language"
+    ],
+    "002": [
+      "Database",
+      "Database",
+      "Database"
+    ],
+    "1": [
+      "Python",
+      "Python",
+      "Py"
+    ],
+    "2": [
+      "PHP",
+      "PHP",
+      "PHP"
+    ],
+    "3": [
+      "Java",
+      "Java",
+      "Java"
+    ],
+    "4": [
+      "Mysql",
+      "Mysql",
+      "Mysql"
+    ],
+    "5": [
+      "Sqlite",
+      "Sqlite",
+      "Sqlite"
+    ]
+  },
+  "relations": {
+    "001": [
+      "1",
+      "2",
+      "3"
+    ],
+    "002": [
+      "4",
+      "5"
+    ]
+  }
+}
