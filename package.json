@@ -5,7 +5,8 @@
   "main": "index.html",
   "dependencies": {
     "del": "^2.2.2",
-    "gulp": "^3.9.1"
+    "gulp": "^4.0.0",
+    "snyk": "^1.104.2"
   },
   "devDependencies": {
     "browser-sync": "^2.16.0",
@@ -21,9 +22,12 @@
     "run-sequence": "^1.2.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "ark1ee",
   "url": "https://arkphp.com",
-  "copyright": "Copyright 2017"
+  "copyright": "Copyright 2017",
+  "snyk": true
 }
